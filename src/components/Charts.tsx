@@ -21,7 +21,7 @@ function ChartFrame({ height, children }: { height: number; children: (width: nu
     observer.observe(element);
     return () => observer.disconnect();
   }, []);
-  return <div ref={ref} style={{ height }}>{width > 0 ? children(width) : null}</div>;
+  return <div ref={ref} className="w-full min-w-0 overflow-hidden" style={{ height }}>{width > 0 ? children(width) : null}</div>;
 }
 
 export function IncomeExpenseChart({ data, currency, language }: { data: ChartPoint[]; currency: string; language: string }) {

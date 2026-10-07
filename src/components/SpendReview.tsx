@@ -46,7 +46,7 @@ export function SpendReview({ month }: { month: string }) {
   }
 
   return (
-    <section className="card grid gap-4 p-5 lg:col-span-12">
+    <section className="card flex flex-col gap-4 p-5">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="font-semibold">How this month was spent</h2>
@@ -73,8 +73,8 @@ export function SpendReview({ month }: { month: string }) {
         <ul className="grid gap-2">
           {spend.map((item) => (
             <li key={item.categoryId} className="flex items-center justify-between gap-3 text-sm">
-              <span>{item.name}</span>
-              <span className="amount font-semibold">{money(item.amount)} · {formatPercent(item.percent, 0)}</span>
+              <span className="min-w-0 truncate">{item.name}</span>
+              <span className="amount shrink-0 font-semibold">{money(item.amount)} · {formatPercent(item.percent, 0)}</span>
             </li>
           ))}
         </ul>
@@ -90,8 +90,8 @@ export function SpendReview({ month }: { month: string }) {
                 <ul className="mt-2 grid gap-1">
                   {alert.items.map((item) => (
                     <li key={item.id} className="flex items-center justify-between gap-3 text-sm">
-                      <span>{item.label} · {item.category}</span>
-                      <span className="amount font-semibold text-[var(--expense)]">{money(item.amount)}</span>
+                      <span className="min-w-0 truncate">{item.label === item.category ? item.label : `${item.label} · ${item.category}`}</span>
+                      <span className="amount shrink-0 font-semibold text-[var(--expense)]">{money(item.amount)}</span>
                     </li>
                   ))}
                 </ul>

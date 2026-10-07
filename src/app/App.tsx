@@ -5,6 +5,7 @@ import { AccountsPage } from '@/pages/AccountsPage';
 import { BudgetsPage } from '@/pages/BudgetsPage';
 import { CategoriesPage } from '@/pages/CategoriesPage';
 import { GoalsPage } from '@/pages/GoalsPage';
+import { PlanPage } from '@/pages/PlanPage';
 import { HomePage } from '@/pages/HomePage';
 import { LockPage } from '@/pages/LockPage';
 import { NotificationsPage } from '@/pages/NotificationsPage';
@@ -60,6 +61,7 @@ export function App() {
               <Route path="reports" element={<ReportsPage />} />
               <Route path="profile" element={<ProfilePage />} />
               <Route path="goals" element={<GoalsPage />} />
+              <Route path="plan" element={<PlanPage />} />
               <Route path="accounts" element={<AccountsPage />} />
               <Route path="categories" element={<CategoriesPage />} />
               <Route path="recurring" element={<RecurringPage />} />

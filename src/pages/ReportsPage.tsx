@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react';
 import { DonutChart, IncomeExpenseChart, SavingsLine } from '@/components/Charts';
+import { IncomeSplit } from '@/components/IncomeSplit';
 import { SpendReview } from '@/components/SpendReview';
 import { PageIntro, Progress, Segmented } from '@/components/ui';
 import { useI18n } from '@/i18n';
-import { formatMonth, monthKey, shiftMonth } from '@/lib/dates';
+import { formatMonth, monthKey } from '@/lib/dates';
 import { formatMoney, formatPercent } from '@/lib/money';
 import { buildInsights } from '@/services/insights';
 import { chartSeries, reportBuckets, resolvedBudgets, spendingByCategory, summarizeMonth, totalsFor, transactionsInRange } from '@/services/finance';
@@ -12,7 +13,8 @@ import { useLedger } from '@/store/ledger';
 export function ReportsPage() {
   const tr = useI18n();
   const [period, setPeriod] = useState<'daily' | 'weekly' | 'monthly' | 'yearly'>('monthly');
-  const [month, setMonth] = useState(() => shiftMonth(monthKey(new Date()), -1));
+  const currentMonth = monthKey(new Date());
+  const [month, setMonth] = useState(currentMonth);
   const transactions = useLedger((state) => state.transactions);
   const categories = useLedger((state) => state.categories);
   const budgets = useLedger((state) => state.budgets);
@@ -30,7 +32,7 @@ export function ReportsPage() {
   const periodTotals = totalsFor(rangeTransactions);
 
   return (
-    <div className="grid gap-4">
+    <div className="flex w-full min-w-0 flex-col gap-4">
       <PageIntro title={tr('Reports')} subtitle="Income, spending, and how the month compared." />
       <Segmented
         label="Report period"
@@ -38,20 +40,20 @@ export function ReportsPage() {
         onChange={setPeriod}
         options={[{ value: 'daily', label: 'Daily' }, { value: 'weekly', label: 'Weekly' }, { value: 'monthly', label: 'Monthly' }, { value: 'yearly', label: 'Yearly' }]}
       />
-      <div className="grid gap-4 lg:grid-cols-2">
-        <section className="card p-5">
+      <div className="grid w-full gap-4 lg:grid-cols-2">
+        <section className="card min-w-0 p-5">
           <h2 className="font-semibold">Income vs expense</h2>
           <IncomeExpenseChart data={series} currency={settings.currency} language={settings.language} />
         </section>
-        <section className="card p-5">
+        <section className="card min-w-0 p-5">
           <h2 className="font-semibold">Category spending</h2>
           <DonutChart data={spend} total={periodTotals.expense} currency={settings.currency} language={settings.language} />
         </section>
-        <section className="card p-5">
+        <section className="card min-w-0 p-5">
           <h2 className="font-semibold">Savings trend</h2>
           <SavingsLine data={series} currency={settings.currency} language={settings.language} />
         </section>
-        <section className="card p-5">
+        <section className="card min-w-0 p-5">
           <h2 className="mb-3 font-semibold">Budget utilization</h2>
           {utilization.length === 0 ? <p className="muted text-sm">No budgets for the current month.</p> : utilization.map((row) => (
             <div key={row.id} className="mb-3">
@@ -61,7 +63,8 @@ export function ReportsPage() {
           ))}
         </section>
       </div>
-      <SpendReview month={month} />
+      <IncomeSplit month={currentMonth} />
+      <SpendReview month={currentMonth} />
       <section className="card p-5">
         <h2 className="mb-3 font-semibold">Financial insights</h2>
         {insights.length === 0 ? <p className="muted text-sm">Add a few weeks of transactions to see comparisons.</p> : (

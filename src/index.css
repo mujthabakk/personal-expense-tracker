@@ -210,6 +210,8 @@ button { cursor: pointer; }
 
 .seg {
   display: flex;
+  width: 100%;
+  align-self: flex-start;
   padding: 4px;
   gap: 4px;
   border-radius: 14px;

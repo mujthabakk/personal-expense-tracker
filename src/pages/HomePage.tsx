@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { IncomeExpenseChart } from '@/components/Charts';
+import { IncomeSplit } from '@/components/IncomeSplit';
 import { SpendReview } from '@/components/SpendReview';
 import { Icon } from '@/components/Icon';
 import { EmptyState, Progress } from '@/components/ui';
@@ -52,7 +53,7 @@ export function HomePage() {
   const upcoming = recurring.filter((rule) => rule.active).slice(0, 3);
 
   return (
-    <div className="grid gap-4">
+    <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">{profile.name ? `Hello, ${profile.name}` : 'Hello'}</h1>
@@ -95,7 +96,18 @@ export function HomePage() {
         <p className="mt-3 text-xs text-white/50">{tr('This month')}</p>
       </section>
 
+      {transactions.length > 0 ? <IncomeSplit month={month} /> : null}
       {transactions.length > 0 ? <SpendReview month={month} /> : null}
+
+      <Link to="/plan" className="card block p-5">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <h2 className="font-semibold">Investment plan</h2>
+            <p className="muted mt-1 text-sm">Emergency fund first, then a monthly split for index funds, safer debt, and gold.</p>
+          </div>
+          <span className="text-sm font-semibold">Open</span>
+        </div>
+      </Link>
 
       {transactions.length === 0 ? (
         <section className="card">

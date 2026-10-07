@@ -17,6 +17,7 @@ const primary = [
 ];
 
 const secondary = [
+  { to: '/plan', label: 'Invest', icon: 'trending' },
   { to: '/goals', label: 'Goals', icon: 'savings' },
   { to: '/recurring', label: 'Recurring', icon: 'repeat' },
   { to: '/accounts', label: 'Accounts', icon: 'bank' },
