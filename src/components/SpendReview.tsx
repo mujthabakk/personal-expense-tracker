@@ -20,6 +20,7 @@ export function SpendReview({ month }: { month: string }) {
   const [aiAlerts, setAiAlerts] = useState<string[]>([]);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const hasKey = readAiKey().trim().length > 0;
   const money = (amount: number) => formatMoney(amount, settings.currency, settings.language);
 
   async function ask() {
@@ -108,7 +109,7 @@ export function SpendReview({ month }: { month: string }) {
         </ul>
       ) : null}
       {error ? <p className="text-sm text-[var(--danger)]">{error}</p> : null}
-      <p className="muted text-xs">AI review uses the free Gemini API. Only this month’s totals and flagged items are sent. <Link to="/profile" className="font-semibold">Add a key in Profile</Link> if you have not yet.</p>
+      {hasKey ? null : <p className="muted text-xs"><Link to="/profile" className="font-semibold">Add a Gemini key in Profile</Link> to run AI review.</p>}
     </section>
   );
 }
