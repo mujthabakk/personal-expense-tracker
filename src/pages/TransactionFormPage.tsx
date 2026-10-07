@@ -1,11 +1,13 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Icon } from '@/components/Icon';
 import { Button, Field, PageIntro, Segmented, TextArea, TextInput } from '@/components/ui';
 import { ACCOUNT_TYPE_LABELS, PAYMENT_LABELS } from '@/data/defaults';
 import { useI18n } from '@/i18n';
 import { combineDate, localDay, toISODate } from '@/lib/dates';
+import { makeId } from '@/lib/id';
 import { parseAmount } from '@/lib/money';
+import { advanceDate } from '@/services/recurring';
 import { FREQUENCIES, PAYMENT_METHODS, type PaymentMethod, type TransactionType } from '@/models/types';
 import { useLedger } from '@/store/ledger';
 
@@ -37,6 +39,7 @@ export function TransactionFormPage() {
   const [recurring, setRecurring] = useState(false);
   const [frequency, setFrequency] = useState<(typeof FREQUENCIES)[number]>('monthly');
   const [error, setError] = useState('');
+  const saving = useRef(false);
 
   useEffect(() => {
     const field = document.getElementById('amount');
@@ -56,7 +59,11 @@ export function TransactionFormPage() {
   }, [transactions, categoryId]);
 
   function submit() {
+    if (saving.current) return;
+    saving.current = true;
     const parsed = parseAmount(amount);
+    const ruleId = recurring && !id ? makeId() : '';
+    const anchorDay = Number(date.slice(8, 10)) || 1;
     const payload = {
       id: id && !duplicateId ? id : undefined,
       type,
@@ -68,14 +75,17 @@ export function TransactionFormPage() {
       description,
       notes,
       date: combineDate(date),
+      recurringTransactionId: ruleId,
     };
     const message = saveTransaction(payload);
     if (message) {
+      saving.current = false;
       setError(message);
       return;
     }
-    if (recurring && !id) {
+    if (ruleId) {
       saveRecurring({
+        id: ruleId,
         type,
         amount: parsed,
         categoryId: payload.categoryId,
@@ -85,8 +95,8 @@ export function TransactionFormPage() {
         description,
         notes,
         frequency,
-        nextDate: date,
-        anchorDay: Number(date.slice(8, 10)) || 1,
+        nextDate: advanceDate(date, frequency, anchorDay),
+        anchorDay,
         reminderDays: 1,
         active: true,
       });

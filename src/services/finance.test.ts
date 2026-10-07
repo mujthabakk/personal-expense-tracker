@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from '@/data/defaults';
 import { advanceDate } from '@/services/recurring';
-import { computeAccountBalance, netWorth, spendingByCategory, summarizeMonth, totalsFor } from '@/services/finance';
+import { computeAccountBalance, dropImmediateTwins, netWorth, spendingByCategory, summarizeMonth, totalsFor } from '@/services/finance';
 import { mergeCollection } from '@/services/syncMerge';
 import { parseCsv, toCsv } from '@/services/exportData';
 import { decryptJson, derivePinKey, encryptJson, randomBytes } from '@/lib/crypto';
@@ -107,6 +107,15 @@ describe('sync and files', () => {
     expect(merged.next).toEqual([{ id: 'a', updatedAt: '2026-02-01T00:00:00.000Z', amount: 2 }]);
     expect(merged.upload.map((item) => item.id)).toEqual(['a']);
     expect(merged.deleteRemote).toEqual(['b']);
+  });
+
+  it('drops a second copy saved in the same moment', () => {
+    const first = txn({ id: 'a', type: 'income', amount: 35000, accountId: 'acc-bank', categoryId: 'cat-freelance', description: 'this month', createdAt: '2026-10-05T10:00:00.000Z' });
+    const second = txn({ id: 'b', type: 'income', amount: 35000, accountId: 'acc-bank', categoryId: 'cat-freelance', description: 'this month', createdAt: '2026-10-05T10:00:00.400Z' });
+    const later = txn({ id: 'c', type: 'income', amount: 35000, accountId: 'acc-bank', categoryId: 'cat-freelance', description: 'this month', createdAt: '2026-10-05T10:01:00.000Z' });
+    const result = dropImmediateTwins([second, first, later]);
+    expect(result.kept.map((item) => item.id)).toEqual(['a', 'c']);
+    expect(result.removedIds).toEqual(['b']);
   });
 
   it('round-trips csv cells and an encrypted payload', async () => {

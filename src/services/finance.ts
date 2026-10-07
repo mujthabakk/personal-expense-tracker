@@ -411,3 +411,24 @@ export function countByType(transactions: Transaction[], type: TransactionType |
   if (type === 'all') return transactions;
   return transactions.filter((transaction) => transaction.type === type);
 }
+
+export function dropImmediateTwins(transactions: Transaction[], windowMs = 2000): { kept: Transaction[]; removedIds: string[] } {
+  const ordered = [...transactions].sort((a, b) => a.createdAt.localeCompare(b.createdAt) || a.id.localeCompare(b.id));
+  const kept: Transaction[] = [];
+  const removedIds: string[] = [];
+  for (const transaction of ordered) {
+    const twin = kept.find((item) =>
+      item.type === transaction.type
+      && item.amount === transaction.amount
+      && item.categoryId === transaction.categoryId
+      && item.accountId === transaction.accountId
+      && item.paymentMethod === transaction.paymentMethod
+      && item.description === transaction.description
+      && localDay(item.date) === localDay(transaction.date)
+      && Math.abs(Date.parse(transaction.createdAt) - Date.parse(item.createdAt)) <= windowMs,
+    );
+    if (twin) removedIds.push(transaction.id);
+    else kept.push(transaction);
+  }
+  return { kept, removedIds };
+}

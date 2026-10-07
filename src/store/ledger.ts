@@ -10,6 +10,7 @@ import type { Account, AppNotification, Budget, Category, PersistedState, Recurr
 import { importCsvText, importRecords, type ImportResult } from '@/services/backup';
 import { buildNotifications } from '@/services/notifications';
 import { advanceDate, materializeRecurring } from '@/services/recurring';
+import { dropImmediateTwins } from '@/services/finance';
 import { syncState } from '@/services/sync';
 import { normalizeAmount, validateAccount, validateBudget, validateCategory, validateGoal, validateTransaction } from '@/services/validators';
 import { addTombstone, clearTombstone, remember, snapshot } from '@/store/helpers';
@@ -31,7 +32,7 @@ export interface SecurityState {
   biometricAvailable: boolean;
 }
 
-export type TransactionDraft = Omit<Transaction, 'id' | 'createdAt' | 'updatedAt' | 'recurringTransactionId'> & { id?: string };
+export type TransactionDraft = Omit<Transaction, 'id' | 'createdAt' | 'updatedAt' | 'recurringTransactionId'> & { id?: string; recurringTransactionId?: string };
 export type CategoryDraft = Omit<Category, 'id' | 'createdAt' | 'updatedAt' | 'isDefault'> & { id?: string };
 export type AccountDraft = Omit<Account, 'id' | 'createdAt' | 'updatedAt' | 'isDefault'> & { id?: string };
 export type BudgetDraft = Omit<Budget, 'id' | 'createdAt' | 'updatedAt'> & { id?: string; everyMonth?: boolean };
@@ -140,7 +141,10 @@ function scheduleSync() {
 
 function prepare(data: PersistedState): PersistedState {
   const materialized = materializeRecurring(data);
-  return { ...materialized, notifications: buildNotifications(materialized, materialized.notifications) };
+  const twins = dropImmediateTwins(materialized.transactions);
+  const tombstones = twins.removedIds.reduce((list, id) => addTombstone(list, 'transactions', id), materialized.tombstones);
+  const cleaned = twins.removedIds.length ? { ...materialized, transactions: twins.kept, tombstones } : materialized;
+  return { ...cleaned, notifications: buildNotifications(cleaned, cleaned.notifications) };
 }
 
 const seed = createInitialState();
@@ -313,7 +317,7 @@ export const useLedger = create<LedgerStore>((set, get) => {
         amount: normalizeAmount(input.amount),
         description: input.description.trim(),
         notes: input.notes.trim(),
-        recurringTransactionId: existing?.recurringTransactionId ?? '',
+        recurringTransactionId: existing?.recurringTransactionId || input.recurringTransactionId || '',
         createdAt: existing?.createdAt ?? stamp,
         updatedAt: stamp,
       };
