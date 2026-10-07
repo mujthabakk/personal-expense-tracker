@@ -38,7 +38,7 @@ export function App() {
   return (
     <>
       {status === 'locked' ? <LockPage /> : (
-        <BrowserRouter>
+        <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '') || undefined}>
           <ScrollToTop />
           <Routes>
             <Route element={<Layout />}>

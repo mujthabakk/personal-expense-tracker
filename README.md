@@ -11,6 +11,12 @@ npm run dev
 
 Open the local URL Vite prints. The app works with no account.
 
+## GitHub Pages
+
+Pushes to `main` publish the site to [https://mujthabakk.github.io/personal-expense-tracker/](https://mujthabakk.github.io/personal-expense-tracker/).
+
+Add the Firebase web config as repository secrets named `VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_AUTH_DOMAIN`, `VITE_FIREBASE_PROJECT_ID`, `VITE_FIREBASE_STORAGE_BUCKET`, `VITE_FIREBASE_MESSAGING_SENDER_ID`, and `VITE_FIREBASE_APP_ID`. In Firebase Authentication, add `mujthabakk.github.io` as an authorized domain.
+
 ## Firebase
 
 1. Create a Firebase project with Authentication (Email/Password) and Cloud Firestore.
