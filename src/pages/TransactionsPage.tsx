@@ -4,6 +4,7 @@ import { Copy, Pencil, Trash2 } from 'lucide-react';
 import { Icon } from '@/components/Icon';
 import { EmptyState, PageIntro, SelectInput, TextInput } from '@/components/ui';
 import { useI18n } from '@/i18n';
+import { chartColor } from '@/lib/color';
 import { formatDay, localDay } from '@/lib/dates';
 import { formatSigned } from '@/lib/money';
 import { PAYMENT_LABELS } from '@/data/defaults';
@@ -126,7 +127,7 @@ export function TransactionsPage() {
                 return (
                   <div key={transaction.id} className="relative">
                     <div className="row-btn">
-                      <span className="grid h-10 w-10 place-items-center rounded-xl" style={{ background: `${category?.color ?? '#334155'}22`, color: category?.color }}>
+                      <span className="grid h-10 w-10 place-items-center rounded-xl" style={{ background: `${chartColor(category?.color ?? '#5b7c99')}22`, color: chartColor(category?.color ?? '#5b7c99') }}>
                         <Icon name={transaction.type === 'transfer' ? 'transfer' : category?.icon ?? 'circle'} />
                       </span>
                       <span>

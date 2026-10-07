@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Bar, BarChart, CartesianGrid, Cell, Line, LineChart, Pie, PieChart, Tooltip, XAxis } from 'recharts';
+import { chartColor } from '@/lib/color';
 import { formatMoney } from '@/lib/money';
 import type { CategorySpend, ChartPoint } from '@/services/finance';
+
+const tooltipStyle = { background: 'var(--surface)', color: 'var(--ink)', border: '1px solid var(--line)', borderRadius: 12 };
 
 function ChartFrame({ height, children }: { height: number; children: (width: number) => ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -28,9 +31,9 @@ export function IncomeExpenseChart({ data, currency, language }: { data: ChartPo
         <BarChart width={width} height={208} data={data} barGap={4}>
           <CartesianGrid vertical={false} stroke="var(--line)" />
           <XAxis dataKey="label" tick={{ fill: 'var(--muted)', fontSize: 12 }} axisLine={false} tickLine={false} />
-          <Tooltip cursor={{ fill: 'var(--surface-2)' }} formatter={(value) => formatMoney(Number(value), currency, language)} contentStyle={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 12 }} />
-          <Bar dataKey="income" fill="#0f7a5a" radius={[6, 6, 0, 0]} isAnimationActive={false} />
-          <Bar dataKey="expense" fill="#c2410c" radius={[6, 6, 0, 0]} isAnimationActive={false} />
+          <Tooltip cursor={{ fill: 'var(--surface-2)' }} formatter={(value) => formatMoney(Number(value), currency, language)} contentStyle={tooltipStyle} labelStyle={{ color: 'var(--ink)' }} itemStyle={{ color: 'var(--ink)' }} />
+          <Bar dataKey="income" fill="#2fbf8f" radius={[6, 6, 0, 0]} isAnimationActive={false} />
+          <Bar dataKey="expense" fill="#e08a4f" radius={[6, 6, 0, 0]} isAnimationActive={false} />
         </BarChart>
       )}
     </ChartFrame>
@@ -45,9 +48,9 @@ export function DonutChart({ data, total, currency, language }: { data: Category
         {(width) => (
           <PieChart width={width} height={224}>
             <Pie data={data} dataKey="amount" nameKey="name" innerRadius={62} outerRadius={84} paddingAngle={2} stroke="none" isAnimationActive={false} cx="50%" cy="50%">
-              {data.map((entry) => <Cell key={entry.categoryId} fill={entry.color} />)}
+              {data.map((entry) => <Cell key={entry.categoryId} fill={chartColor(entry.color)} />)}
             </Pie>
-            <Tooltip formatter={(value) => formatMoney(Number(value), currency, language)} contentStyle={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 12 }} />
+            <Tooltip formatter={(value) => formatMoney(Number(value), currency, language)} contentStyle={tooltipStyle} labelStyle={{ color: 'var(--ink)' }} itemStyle={{ color: 'var(--ink)' }} />
           </PieChart>
         )}
       </ChartFrame>
@@ -68,8 +71,8 @@ export function SavingsLine({ data, currency, language }: { data: ChartPoint[]; 
         <LineChart width={width} height={208} data={data}>
           <CartesianGrid vertical={false} stroke="var(--line)" />
           <XAxis dataKey="label" tick={{ fill: 'var(--muted)', fontSize: 12 }} axisLine={false} tickLine={false} />
-          <Tooltip formatter={(value) => formatMoney(Number(value), currency, language)} contentStyle={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 12 }} />
-          <Line type="monotone" dataKey="savings" stroke="#1d4e89" strokeWidth={2} dot={false} isAnimationActive={false} />
+          <Tooltip formatter={(value) => formatMoney(Number(value), currency, language)} contentStyle={tooltipStyle} labelStyle={{ color: 'var(--ink)' }} itemStyle={{ color: 'var(--ink)' }} />
+          <Line type="monotone" dataKey="savings" stroke="#7eb6ef" strokeWidth={2} dot={false} isAnimationActive={false} />
         </LineChart>
       )}
     </ChartFrame>

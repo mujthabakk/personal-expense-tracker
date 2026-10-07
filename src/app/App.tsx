@@ -9,6 +9,8 @@ import { HomePage } from '@/pages/HomePage';
 import { LockPage } from '@/pages/LockPage';
 import { NotificationsPage } from '@/pages/NotificationsPage';
 import { ProfilePage } from '@/pages/ProfilePage';
+import { SignInPage } from '@/pages/SignInPage';
+import { isFirebaseConfigured } from '@/lib/firebase';
 import { RecurringPage } from '@/pages/RecurringPage';
 import { ReportsPage } from '@/pages/ReportsPage';
 import { TransactionFormPage } from '@/pages/TransactionFormPage';
@@ -24,6 +26,8 @@ function ScrollToTop() {
 export function App() {
   const status = useLedger((state) => state.status);
   const error = useLedger((state) => state.error);
+  const authUser = useLedger((state) => state.authUser);
+  const authReady = useLedger((state) => state.authReady);
   const init = useLedger((state) => state.init);
 
   useEffect(() => { void init(); }, [init]);
@@ -33,6 +37,12 @@ export function App() {
   }
   if (status === 'error') {
     return <div className="grid min-h-screen place-items-center px-6 text-center"><div><h1 className="text-2xl font-semibold">Folio could not open its database</h1><p className="muted mt-2 max-w-md">{error || 'This browser may be blocking storage. Try another window that is not private.'}</p></div></div>;
+  }
+  if (isFirebaseConfigured() && !authReady) {
+    return <div className="grid min-h-screen place-items-center"><p className="text-lg font-semibold tracking-tight">Folio</p></div>;
+  }
+  if (isFirebaseConfigured() && !authUser) {
+    return <><SignInPage /><Feedback /></>;
   }
 
   return (

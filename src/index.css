@@ -29,14 +29,14 @@
 }
 
 .dark {
-  --bg: #0e1116;
-  --surface: #171b22;
-  --surface-2: #1e242e;
+  --bg: #0b0e13;
+  --surface: #1b2230;
+  --surface-2: #263044;
   --ink: #f4f6f8;
-  --muted: #a8b1c0;
-  --line: #2c3340;
+  --muted: #b4bdcc;
+  --line: #3d4a60;
   --accent: #f4f6f8;
-  --accent-ink: #171b22;
+  --accent-ink: #12161c;
   --income: #8ddec0;
   --expense: #f3b08a;
   --warning: #e8c98a;
@@ -64,7 +64,8 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-button, input, select, textarea { font: inherit; color: inherit; }
+button, input, select, textarea { font: inherit; }
+input, select, textarea { color: var(--ink); background-color: var(--surface); }
 
 button { cursor: pointer; }
 
@@ -105,6 +106,10 @@ button { cursor: pointer; }
   border: 1px solid var(--line);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
+}
+
+.dark .card {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.03), 0 16px 36px rgba(0, 0, 0, 0.28);
 }
 
 .muted { color: var(--muted); }
@@ -285,6 +290,7 @@ button { cursor: pointer; }
 .balance-card {
   background: #171b22;
   color: #f7f8fa;
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 20px;
   padding: 24px;
 }
@@ -399,6 +405,15 @@ button { cursor: pointer; }
 @keyframes shake {
   25% { transform: translateX(-4px); }
   75% { transform: translateX(4px); }
+}
+
+.btn-primary { color: var(--accent-ink); }
+.btn-danger { color: #fff; }
+.chip-active { color: var(--accent-ink); }
+
+.dark input[type="date"]::-webkit-calendar-picker-indicator,
+.dark input[type="month"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
 }
 
 @media (prefers-reduced-motion: reduce) {

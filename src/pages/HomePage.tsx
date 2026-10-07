@@ -6,6 +6,7 @@ import { Icon } from '@/components/Icon';
 import { EmptyState, Progress } from '@/components/ui';
 import { useI18n } from '@/i18n';
 import { formatMonth, monthKey, shiftMonth } from '@/lib/dates';
+import { chartColor } from '@/lib/color';
 import { formatMoney, formatPercent, formatSigned } from '@/lib/money';
 import { QUICK_EXPENSES } from '@/models/types';
 import { chartSeries, netWorth, reminderLabel, resolvedBudgets, spendingByCategory, summarizeMonth, transactionTitle, goalProgress } from '@/services/finance';
@@ -107,8 +108,8 @@ export function HomePage() {
             <div className="mt-4">
               <IncomeExpenseChart data={weeks} currency={currency} language={language} />
               <div className="mt-2 flex gap-4 text-xs text-[var(--muted)]">
-                <span className="inline-flex items-center gap-1"><i className="inline-block h-2 w-2 rounded-full bg-[#0f7a5a]" /> Income</span>
-                <span className="inline-flex items-center gap-1"><i className="inline-block h-2 w-2 rounded-full bg-[#c2410c]" /> Expenses</span>
+                <span className="inline-flex items-center gap-1"><i className="inline-block h-2 w-2 rounded-full bg-[#2fbf8f]" /> Income</span>
+                <span className="inline-flex items-center gap-1"><i className="inline-block h-2 w-2 rounded-full bg-[#e08a4f]" /> Expenses</span>
               </div>
             </div>
           </section>
@@ -142,7 +143,7 @@ export function HomePage() {
                 const category = categories.find((item) => item.id === transaction.categoryId);
                 return (
                   <Link key={transaction.id} to={`/transactions/${transaction.id}/edit`} className="row-btn">
-                    <span className="grid h-10 w-10 place-items-center rounded-xl" style={{ background: `${category?.color ?? '#334155'}22`, color: category?.color ?? 'inherit' }}>
+                    <span className="grid h-10 w-10 place-items-center rounded-xl" style={{ background: `${chartColor(category?.color ?? '#5b7c99')}22`, color: chartColor(category?.color ?? '#5b7c99') }}>
                       <Icon name={transaction.type === 'transfer' ? 'transfer' : category?.icon ?? 'circle'} />
                     </span>
                     <span>

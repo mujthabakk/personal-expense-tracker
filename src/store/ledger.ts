@@ -45,6 +45,7 @@ interface LedgerStore extends PersistedState {
   error: string;
   pinError: string;
   authUser: AuthUser | null;
+  authReady: boolean;
   syncStatus: SyncStatus;
   online: boolean;
   toasts: ToastItem[];
@@ -158,6 +159,7 @@ export const useLedger = create<LedgerStore>((set, get) => {
     error: '',
     pinError: '',
     authUser: null,
+    authReady: false,
     syncStatus: 'local',
     online: typeof navigator === 'undefined' ? true : navigator.onLine,
     toasts: [],
@@ -186,14 +188,18 @@ export const useLedger = create<LedgerStore>((set, get) => {
         return;
       }
 
-      watchAuth((user) => {
-        const email = user?.email ?? '';
-        set({ authUser: user ? { uid: user.uid, email } : null });
-        if (user && get().status === 'ready') {
-          if (email && !get().userProfile.email) get().updateProfile({ email });
-          void get().syncNow();
-        }
-      });
+      if (!isFirebaseConfigured()) {
+        set({ authReady: true });
+      } else {
+        watchAuth((user) => {
+          const email = user?.email ?? '';
+          set({ authUser: user ? { uid: user.uid, email } : null, authReady: true });
+          if (user && get().status === 'ready') {
+            if (email && !get().userProfile.email) get().updateProfile({ email });
+            void get().syncNow();
+          }
+        });
+      }
       window.addEventListener('online', () => {
         set({ online: true });
         void get().syncNow();
