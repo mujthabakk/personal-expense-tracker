@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { IncomeExpenseChart } from '@/components/Charts';
+import { SpendReview } from '@/components/SpendReview';
 import { Icon } from '@/components/Icon';
 import { EmptyState, Progress } from '@/components/ui';
 import { useI18n } from '@/i18n';
@@ -93,6 +94,8 @@ export function HomePage() {
         </div>
         <p className="mt-3 text-xs text-white/50">{tr('This month')}</p>
       </section>
+
+      {transactions.length > 0 ? <SpendReview month={month} /> : null}
 
       {transactions.length === 0 ? (
         <section className="card">

@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { DonutChart, IncomeExpenseChart, SavingsLine } from '@/components/Charts';
+import { SpendReview } from '@/components/SpendReview';
 import { PageIntro, Progress, Segmented } from '@/components/ui';
 import { useI18n } from '@/i18n';
 import { formatMonth, monthKey, shiftMonth } from '@/lib/dates';
@@ -60,6 +61,7 @@ export function ReportsPage() {
           ))}
         </section>
       </div>
+      <SpendReview month={month} />
       <section className="card p-5">
         <h2 className="mb-3 font-semibold">Financial insights</h2>
         {insights.length === 0 ? <p className="muted text-sm">Add a few weeks of transactions to see comparisons.</p> : (

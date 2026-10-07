@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Button, Field, PageIntro, Segmented, SelectInput, TextInput } from '@/components/ui';
 import { useI18n } from '@/i18n';
 import { monthKey, toISODate } from '@/lib/dates';
+import { readAiKey, writeAiKey } from '@/lib/aiKey';
 import { isFirebaseConfigured } from '@/lib/firebase';
 import { CURRENCIES, type ThemeMode } from '@/models/types';
 import { createBackup, readBackup, type BackupFile } from '@/services/backup';
@@ -53,6 +54,7 @@ export function ProfilePage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  const [aiKey, setAiKey] = useState(readAiKey);
 
   async function downloadExport() {
     const bounds = range === 'all' ? { from: '0000-01-01', to: '9999-12-31' } : range === 'month' ? monthRange() : { from, to };
@@ -94,6 +96,13 @@ export function ProfilePage() {
           <div className="label">{tr('Theme')}</div>
           <Segmented label="Theme" value={settings.theme} onChange={(theme: ThemeMode) => updateSettings({ theme })} options={[{ value: 'light', label: tr('Light') }, { value: 'dark', label: tr('Dark') }, { value: 'system', label: tr('System') }]} />
         </div>
+      </section>
+
+      <section className="card grid gap-3 p-5">
+        <h2 className="font-semibold">AI spending review</h2>
+        <p className="muted text-sm">Uses Google’s free Gemini API. The key stays in this browser and is never synced. Create one at <a className="font-semibold" href="https://aistudio.google.com/apikey" target="_blank" rel="noreferrer">Google AI Studio</a>.</p>
+        <Field label="Gemini API key"><TextInput type="password" value={aiKey} autoComplete="off" onChange={(event) => setAiKey(event.target.value)} placeholder="AIza..." /></Field>
+        <Button onClick={() => { writeAiKey(aiKey); toast(aiKey.trim() ? 'AI key saved on this device.' : 'AI key removed.'); }}>Save key</Button>
       </section>
 
       <section className="card p-5">
