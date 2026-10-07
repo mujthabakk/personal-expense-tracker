@@ -202,6 +202,12 @@ button { cursor: pointer; }
   border-color: var(--accent);
 }
 
+.chip-income {
+  color: var(--income);
+  border-color: color-mix(in srgb, var(--income) 55%, var(--line));
+  text-decoration: none;
+}
+
 .seg {
   display: flex;
   padding: 4px;

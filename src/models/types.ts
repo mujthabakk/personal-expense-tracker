@@ -240,3 +240,10 @@ export const QUICK_EXPENSES = [
   { amount: 200, categoryId: 'cat-transport', label: 'Transport' },
   { amount: 500, categoryId: 'cat-shopping', label: 'Shopping' },
 ] as const;
+
+export const QUICK_INCOME = [
+  { categoryId: 'cat-salary', label: 'Salary' },
+  { categoryId: 'cat-freelance', label: 'Freelance' },
+  { categoryId: 'cat-bonus', label: 'Bonus' },
+  { categoryId: 'cat-gift', label: 'Gift' },
+] as const;

@@ -14,7 +14,8 @@ export function TransactionFormPage() {
   const navigate = useNavigate();
   const { id } = useParams();
   const location = useLocation();
-  const duplicateId = (location.state as { duplicateId?: string } | null)?.duplicateId;
+  const preset = location.state as { duplicateId?: string; type?: TransactionType; categoryId?: string } | null;
+  const duplicateId = preset?.duplicateId;
   const transactions = useLedger((state) => state.transactions);
   const categories = useLedger((state) => state.categories);
   const accounts = useLedger((state) => state.accounts);
@@ -23,9 +24,9 @@ export function TransactionFormPage() {
   const saveRecurring = useLedger((state) => state.saveRecurring);
   const existing = transactions.find((item) => item.id === (id ?? duplicateId));
 
-  const [type, setType] = useState<TransactionType>(existing?.type ?? 'expense');
+  const [type, setType] = useState<TransactionType>(existing?.type ?? preset?.type ?? 'expense');
   const [amount, setAmount] = useState(existing && !duplicateId ? String(existing.amount) : existing ? String(existing.amount) : '');
-  const [categoryId, setCategoryId] = useState(existing?.categoryId || settings.lastCategoryId);
+  const [categoryId, setCategoryId] = useState(existing?.categoryId || preset?.categoryId || settings.lastCategoryId);
   const [description, setDescription] = useState(existing?.description ?? '');
   const [date, setDate] = useState(existing && !duplicateId ? localDay(existing.date) : toISODate(new Date()));
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(existing?.paymentMethod ?? settings.lastPaymentMethod);

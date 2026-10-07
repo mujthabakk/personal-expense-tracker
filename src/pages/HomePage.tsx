@@ -8,7 +8,7 @@ import { useI18n } from '@/i18n';
 import { formatMonth, monthKey, shiftMonth } from '@/lib/dates';
 import { chartColor } from '@/lib/color';
 import { formatMoney, formatPercent, formatSigned } from '@/lib/money';
-import { QUICK_EXPENSES } from '@/models/types';
+import { QUICK_EXPENSES, QUICK_INCOME } from '@/models/types';
 import { chartSeries, netWorth, reminderLabel, resolvedBudgets, spendingByCategory, summarizeMonth, transactionTitle, goalProgress } from '@/services/finance';
 import { useLedger } from '@/store/ledger';
 
@@ -63,12 +63,23 @@ export function HomePage() {
         </div>
       </div>
 
-      <div className="flex gap-2 overflow-auto">
-        {QUICK_EXPENSES.map((item) => (
-          <button key={item.categoryId} type="button" className="chip" onClick={() => quickAdd(item.amount, item.categoryId)}>
-            + {formatMoney(item.amount, currency, language)} {item.label}
-          </button>
-        ))}
+      <div className="grid gap-2">
+        <div className="flex items-center gap-2 overflow-auto">
+          <span className="shrink-0 text-xs font-semibold text-[var(--expense)]">{tr('Expense')}</span>
+          {QUICK_EXPENSES.map((item) => (
+            <button key={item.categoryId} type="button" className="chip shrink-0" onClick={() => quickAdd(item.amount, item.categoryId)}>
+              + {formatMoney(item.amount, currency, language)} {item.label}
+            </button>
+          ))}
+        </div>
+        <div className="flex items-center gap-2 overflow-auto">
+          <span className="shrink-0 text-xs font-semibold text-[var(--income)]">{tr('Income')}</span>
+          {QUICK_INCOME.map((item) => (
+            <Link key={item.categoryId} to="/transactions/new" state={{ type: 'income', categoryId: item.categoryId }} className="chip chip-income shrink-0">
+              + {tr(item.label)}
+            </Link>
+          ))}
+        </div>
       </div>
 
       <section className="balance-card">
@@ -88,7 +99,7 @@ export function HomePage() {
           <EmptyState
             title={tr('No transactions yet.')}
             body={tr('Start tracking your spending by adding your first expense.')}
-            action={<Link to="/transactions/new" className="btn btn-primary">Add expense</Link>}
+            action={<div className="flex flex-wrap justify-center gap-2"><Link to="/transactions/new" state={{ type: 'income', categoryId: 'cat-salary' }} className="btn btn-secondary">Add income</Link><Link to="/transactions/new" className="btn btn-primary">Add expense</Link></div>}
           />
         </section>
       ) : (
